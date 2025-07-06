@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kabaddi Scoreboard Controller</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+    input, select, button, label { margin: 5px; padding: 5px; font-size: 14px; }
+    .section { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Kabaddi Scoreboard Controller</h2>
+
+  <div class="section">
+    <label>Team A Name: <input id="teamAName"></label><br>
+    <label>Font Size: <input type="number" id="teamAFSize" value="26" /></label>
+    <label><input type="checkbox" id="teamABold" /> Bold</label><br>
+    <button onclick="updateScore('A', 1)">+1</button>
+    <button onclick="updateScore('A', 1.5)">+1.5</button>
+    <button onclick="updateScore('A', -1)">-1</button>
+    <span id="scoreA">0</span>
+  </div>
+
+  <div class="section">
+    <label>Team B Name: <input id="teamBName"></label><br>
+    <label>Font Size: <input type="number" id="teamBFSize" value="26" /></label>
+    <label><input type="checkbox" id="teamBBold" /> Bold</label><br>
+    <button onclick="updateScore('B', 1)">+1</button>
+    <button onclick="updateScore('B', 1.5)">+1.5</button>
+    <button onclick="updateScore('B', -1)">-1</button>
+    <span id="scoreB">0</span>
+  </div>
+
+  <div class="section">
+    <label>Match Type: 
+      <select id="matchType">
+        <option value="Show Match">Show Match</option>
+        <option value="Semi Final Match">Semi Final Match</option>
+        <option value="Final Match">Final Match</option>
+      </select>
+    </label><br>
+    <label>Font Size: <input type="number" id="matchFontSize" value="24"></label>
+    <label><input type="checkbox" id="matchBold"> Bold</label><br>
+    <label><input type="checkbox" id="showMatchType" checked /> Show Match Type</label>
+
+  </div>
+
+  <div class="section">
+    <label>Overlay Style:
+      <select id="overlayStyle">
+        <option value="overlay1">Purple</option>
+        <option value="overlay2">Red</option>
+        <option value="overlay3">White</option>
+      </select>
+    </label>
+  </div>
+
+  <button onclick="resetScore()">Reset</button>
+<div class="section">
+  <label>Score Font Size:</label><br>
+  <label>Team A Score Size: <input type="number" id="scoreAFSize" value="28" /></label>
+  <label>Team B Score Size: <input type="number" id="scoreBFSize" value="28" /></label>
+</div>
+
+<button onclick="toggleScoreboard()">Show/Hide Scoreboard</button>
+
+  <script>
+    let scoreA = 0, scoreB = 0, scoreboardVisible = true;
+
+    function updateDisplay() {
+      localStorage.setItem('scoreAFSize', document.getElementById('scoreAFSize').value);
+      localStorage.setItem('scoreBFSize', document.getElementById('scoreBFSize').value);
+      localStorage.setItem('teamA', document.getElementById('teamAName').value);
+      localStorage.setItem('teamB', document.getElementById('teamBName').value);
+      localStorage.setItem('scoreA', scoreA);
+      localStorage.setItem('scoreB', scoreB);
+      localStorage.setItem('matchType', document.getElementById('matchType').value);
+      localStorage.setItem('visible', scoreboardVisible);
+      localStorage.setItem('overlayStyle', document.getElementById('overlayStyle').value);
+      localStorage.setItem('showMatchType', document.getElementById('showMatchType').checked);
+      localStorage.setItem('teamAFSize', document.getElementById('teamAFSize').value);
+      localStorage.setItem('teamBFSize', document.getElementById('teamBFSize').value);
+      localStorage.setItem('matchFontSize', document.getElementById('matchFontSize').value);
+      localStorage.setItem('teamABold', document.getElementById('teamABold').checked);
+      localStorage.setItem('teamBBold', document.getElementById('teamBBold').checked);
+      localStorage.setItem('matchBold', document.getElementById('matchBold').checked);
+      document.getElementById('scoreA').innerText = scoreA;
+      document.getElementById('scoreB').innerText = scoreB;
+    }
+
+    function updateScore(team, points) {
+      if (team === 'A') scoreA += points;
+      else scoreB += points;
+      updateDisplay();
+    }
+
+function resetScore() {
+  scoreA = 0;
+  scoreB = 0;
+  document.getElementById('teamAName').value = '';
+  document.getElementById('teamBName').value = '';
+  document.getElementById('showMatchType').checked = false;
+  updateDisplay();
+}
+
+    function toggleScoreboard() {
+      scoreboardVisible = !scoreboardVisible;
+      updateDisplay();
+    }
+
+window.onload = () => {
+ document.getElementById('teamAName').value = localStorage.getItem('teamA') || '';
+  document.getElementById('teamBName').value = localStorage.getItem('teamB') || '';
+  document.getElementById('matchType').value = localStorage.getItem('matchType') || 'League';
+  document.getElementById('overlayStyle').value = localStorage.getItem('overlayStyle') || 'overlay1';
+  document.getElementById('showMatchType').checked = localStorage.getItem('showMatchType') === 'true';
+  document.getElementById('teamAFSize').value = localStorage.getItem('teamAFSize') || 26;
+  document.getElementById('teamBFSize').value = localStorage.getItem('teamBFSize') || 26;
+  document.getElementById('scoreAFSize').value = localStorage.getItem('scoreAFSize') || 28;
+  document.getElementById('scoreBFSize').value = localStorage.getItem('scoreBFSize') || 28;
+  document.getElementById('matchFontSize').value = localStorage.getItem('matchFontSize') || 24;
+  document.getElementById('teamABold').checked = localStorage.getItem('teamABold') === 'true';
+  document.getElementById('teamBBold').checked = localStorage.getItem('teamBBold') === 'true';
+  document.getElementById('matchBold').checked = localStorage.getItem('matchBold') === 'true';
+  scoreA = parseFloat(localStorage.getItem('scoreA') || 0);
+  scoreB = parseFloat(localStorage.getItem('scoreB') || 0);
+  document.getElementById('scoreA').innerText = scoreA;
+  document.getElementById('scoreB').innerText = scoreB;
+};
+
+
+    setInterval(updateDisplay, 500);
+  </script>
+</body>
+</html>
