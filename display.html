@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kabaddi Scoreboard Display</title>
+  <style>
+    body { margin: 0; background: transparent; overflow: hidden; }
+    #container { position: relative; width: 100%; height: 100vh; }
+    #overlay { position: absolute; top: 0; left: 0; width: auto; height: auto; z-index: 1; }
+    .text {
+      position: absolute;
+      font-family: 'Arial Black', sans-serif;
+      color: white;
+      text-shadow: 2px 2px 5px black;
+      font-size: 28px;
+      z-index: 2;
+      cursor: move;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <img id="overlay" src="overlay1.png" />
+    <div id="teamA" class="text" style="top: 8px; left: 130px;">TEAM A</div>
+    <div id="scoreA" class="text" style="top: 5px; left: 40px;">0</div>
+    <div id="teamB" class="text" style="top: 8px; right: 130px;">TEAM B</div>
+    <div id="scoreB" class="text" style="top: 5px; right: 40px;">0</div>
+    <div id="matchType" class="text" style="top: 55px; left: 360px;">MATCH</div>
+  </div>
+
+  <script>
+    const textIds = ['teamA', 'teamB', 'scoreA', 'scoreB', 'matchType'];
+
+function restorePosition(id) {
+  const el = document.getElementById(id);
+  const left = localStorage.getItem(id + '_left');
+  const top = localStorage.getItem(id + '_top');
+  if (left && top) {
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+    el.style.position = 'absolute';
+  }
+}
+
+
+    function updateDisplay() {
+const getLS = key => localStorage.getItem(key) || '';
+       document.getElementById('scoreA').style.fontSize = getLS('scoreAFSize') + 'px';
+       document.getElementById('scoreB').style.fontSize = getLS('scoreBFSize') + 'px';
+      document.getElementById('teamA').innerText = getLS('teamA');
+      document.getElementById('teamB').innerText = getLS('teamB');
+      document.getElementById('scoreA').innerText = getLS('scoreA');
+      document.getElementById('scoreB').innerText = getLS('scoreB');
+      document.getElementById('matchType').innerText = getLS('matchType');
+      document.getElementById('overlay').src = (getLS('overlayStyle') || 'overlay1') + '.png';
+      document.getElementById('matchType').style.display = getLS('showMatchType') === 'true' ? 'block' : 'none';
+      const container = document.getElementById('container');
+const visible = getLS('visible') !== 'false';
+container.style.visibility = visible ? 'visible' : 'hidden';
+
+      // Font sizes and bold toggles
+      document.getElementById('teamA').style.fontSize = getLS('teamAFSize') + 'px';
+      document.getElementById('teamA').style.fontWeight = getLS('teamABold') === 'true' ? 'bold' : 'normal';
+      document.getElementById('teamB').style.fontSize = getLS('teamBFSize') + 'px';
+      document.getElementById('teamB').style.fontWeight = getLS('teamBBold') === 'true' ? 'bold' : 'normal';
+      document.getElementById('matchType').style.fontSize = getLS('matchFontSize') + 'px';
+      document.getElementById('matchType').style.fontWeight = getLS('matchBold') === 'true' ? 'bold' : 'normal';
+    }
+
+    // Dragging logic
+    textIds.forEach(id => {
+      const el = document.getElementById(id);
+      let isDown = false, offset = [0, 0];
+
+      el.addEventListener('mousedown', e => {
+        isDown = true;
+        offset = [el.offsetLeft - e.clientX, el.offsetTop - e.clientY];
+      }, true);
+
+      document.addEventListener('mouseup', () => { isDown = false; }, true);
+
+      document.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.clientX + offset[0], y = e.clientY + offset[1];
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        el.style.right = ''; // Clear right if set
+localStorage.setItem(id + '_left', x);
+localStorage.setItem(id + '_top', y);
+      }, true);
+    });
+
+['teamA', 'teamB', 'scoreA', 'scoreB', 'matchType'].forEach(id => {
+  restorePosition(id);
+});
+
+    setInterval(updateDisplay, 300);
+  </script>
+</body>
+</html>
